@@ -1,37 +1,22 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import Square from './template/square/square';
-const cellArr = [{
-  x:4,y:4
-},{
-  x:5,y:4
-},{
-  x:4,y:3
-},{
-  x:4,y:2
-}]
-var currentSquare;
+import Panel from './template/gammer/panel';
+var panelRef;
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      currentSquare:undefined
+      
     }
   }
-  setCurrentSquare(instance){
-    currentSquare = instance;
-  }
-  componentDidMount(){
-    this.setState({
-      currentSquare:currentSquare
-    })
+  refCb(instance){
+    panelRef = instance;
   }
   squareStartDown(){
-    this.state.currentSquare.freeDown();
+    panelRef.currentSquareDown();
   }
   squareStopDown(){
-    this.state.currentSquare.stopOnland();
+    panelRef.currentSquareStop();
   }
   render() {
     const squareStartDownFunc = this.squareStartDown.bind(this);
@@ -42,7 +27,7 @@ class App extends Component {
           <button type="button" onClick={squareStartDownFunc}>down</button>
           <button type="button" onClick={squareStopDownFunc}>stop</button>
         </div>
-        <Square ref={this.setCurrentSquare} cellArr={cellArr}></Square>
+        <Panel ref={this.refCb}></Panel>
       </div>
     )
   }

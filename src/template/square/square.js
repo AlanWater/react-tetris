@@ -1,4 +1,4 @@
-import React,{ Component } from 'react';
+import React from 'react';
 import Cell from './cell';
 //方块抽象类
 class Square extends Cell{
@@ -6,7 +6,7 @@ class Square extends Cell{
         super(props);
         this.state = {
             downTimer:undefined,
-            cellArr:props.cellArr
+            cellArr:this.props.cellArr
         }
     }
     //所有方块都有的抽象方法
@@ -17,19 +17,20 @@ class Square extends Cell{
                 this.setState({
                     cellArr:this.state.cellArr.map((item)=>({
                         x:item.x,
-                        y:item.y+1
+                        y:item.y+1,
+                        shapetype:item.shapetype
                     }))
                 })
             },1000)
         })
     }
     //落地停止,方块碰到地面会停止运动
-    stopOnland(){
+    stop(){
         clearInterval(this.state.downTimer);
     }
     //每个方块都会变形
     render(){
-        return this.state.cellArr.map((item,idx)=>(<Cell key={idx} x={item.x} y={item.y}></Cell>))
+        return this.state.cellArr.map((item,idx)=>(<Cell key={idx} shapetype={item.shapetype} x={item.x} y={item.y}></Cell>))
     }
 }
 export default Square;
