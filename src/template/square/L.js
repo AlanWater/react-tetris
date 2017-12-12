@@ -39,10 +39,10 @@ class L extends Square{
             }
         }
     }
-    freeDownL(){
+    freeDown(){
         currSquare.freeDown();
     }
-    stopL(){
+    stop(){
         currSquare.stop();
     }
     refCb(instance){

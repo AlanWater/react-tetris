@@ -29,10 +29,10 @@ class Panel extends Component{
         
     }
     currentSquareDown(){
-        currentInstance.freeDownL();
+        currentInstance.freeDown();
     }
     currentSquareStop(){
-        currentInstance.stopL();
+        currentInstance.stop();
     }
     render(){
         return <div style={panelStyle}>
