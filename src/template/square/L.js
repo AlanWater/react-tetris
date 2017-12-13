@@ -45,6 +45,15 @@ class L extends Square{
     stop(){
         currSquare.stop();
     }
+    left(){
+        currSquare.left();
+    }
+    right(){
+        currSquare.right();
+    }
+    setDownSpeed( speed ){
+        currSquare.setDownSpeed( speed );
+    }
     refCb(instance){
         currSquare = instance;
     }

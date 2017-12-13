@@ -4,5 +4,7 @@
         cell_w = 1, //小方块宽度 单位为1 UNIT
         cell_h = 1, //小方块高度 单位为1 UNIT
         game_panel_h = 20, //游戏屏幕的高度,单位为1 UNIT
-        game_panel_w = 10; //游戏屏幕的宽度,单位为1 UNIT
-export  {UNIT,cell_w,cell_h,game_panel_h,game_panel_w}
+        game_panel_w = 10, //游戏屏幕的宽度,单位为1 UNIT
+        NORMAL_DOWN_SPEED = 1, //下落速度初始为1
+        FAST_DOWN_SPEED = 10; //快速下落速度为8
+export  {UNIT,cell_w,cell_h,game_panel_h,game_panel_w,NORMAL_DOWN_SPEED,FAST_DOWN_SPEED}

@@ -1,6 +1,7 @@
 import React,{ Component } from 'react';
-import { game_panel_w,game_panel_h,UNIT } from './../config/square.base.config';
+import { game_panel_w,game_panel_h,UNIT,FAST_DOWN_SPEED,NORMAL_DOWN_SPEED } from './../config/square.base.config';
 import L from './../square/L';
+import { keymap } from './../config/panel.keymap.config';
 const panelStyle = {
     border:'1px solid #333',
     position:'relative',
@@ -8,7 +9,8 @@ const panelStyle = {
     width:game_panel_w*UNIT+'px',
     height:game_panel_h*UNIT+'px'
 }
-var currentInstance = {};
+var currentInstance = {},
+    fastDownFlag = false;
 class Panel extends Component{
     constructor(props){
         super(props);
@@ -26,13 +28,58 @@ class Panel extends Component{
         currentInstance = instance;
     }
     componentDidMount(){
-        
+        document.addEventListener('keydown',(event)=>{
+            switch(keymap[event.key]){
+                case 'up':{
+                    break;
+                }
+                case 'left':{
+                    this.currentSquareLeft();
+                    break;
+                }
+                case 'right':{
+                    this.currentSquareRight();
+                    break;
+                }
+                case 'down':{
+                    if(!fastDownFlag){
+                        fastDownFlag = true;
+                        currentInstance.setDownSpeed( FAST_DOWN_SPEED );
+                    }
+                    break;
+                }
+            }
+        })
+        document.addEventListener('keyup',(event)=>{
+            switch(keymap[event.key]){
+                case 'up':{
+                    break;
+                }
+                case 'left':{
+                    break;
+                }
+                case 'right':{
+                    break;
+                }
+                case 'down':{
+                    fastDownFlag = false;
+                    currentInstance.setDownSpeed( NORMAL_DOWN_SPEED );
+                    break;
+                }
+            }
+        })
     }
     currentSquareDown(){
         currentInstance.freeDown();
     }
     currentSquareStop(){
         currentInstance.stop();
+    }
+    currentSquareLeft(){
+        currentInstance.left();
+    }
+    currentSquareRight(){
+        currentInstance.right();
     }
     render(){
         return <div style={panelStyle}>
