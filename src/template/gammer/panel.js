@@ -31,6 +31,7 @@ class Panel extends Component{
         document.addEventListener('keydown',(event)=>{
             switch(keymap[event.key]){
                 case 'up':{
+                    this.currentSquareChange();
                     break;
                 }
                 case 'left':{
@@ -80,6 +81,9 @@ class Panel extends Component{
     }
     currentSquareRight(){
         currentInstance.right();
+    }
+    currentSquareChange(){
+        currentInstance.change();
     }
     render(){
         return <div style={panelStyle}>
