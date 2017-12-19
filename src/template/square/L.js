@@ -1,17 +1,18 @@
 import React from 'react';
 import Square from './square';
+import { getOxy } from './../gammer/common.methods';
 var currSquare,
     Oxy;
 class L extends Square{
     constructor(props){
         super(props);
-        this.state = {
-            type:Math.random()*4 | 0
-        }
         Oxy = this.props.Oxy;
     }
     //获取以左下角为原点的type类型的形状坐标数组
     getCellArrOfChapeByType(type){
+        if(!!currSquare){
+            Oxy = getOxy(currSquare.state.cellArr);
+        }
         switch(type){
             case 0:{
                 return [{x:Oxy.x,y:Oxy.y,shapetype:'L'},
@@ -54,31 +55,21 @@ class L extends Square{
     setDownSpeed( speed ){
         currSquare.setDownSpeed( speed );
     }
-    getOxy( arr ){
-        let minX=9999;
-        let maxY=-1;
-        arr.map((item)=>{
-            minX = minX>item.x?item.x:minX;
-            maxY = maxY<item.y?item.y:maxY;
-        })
-        return {
-            x:minX,
-            y:maxY
-        }
-    }
     change(){
-        this.setState((preState)=>({
-            type:(preState.type+1)%4
-        }));
+        currSquare.change();
     }
     componentWillUpdate(){
-        Oxy = this.getOxy(currSquare.state.cellArr)
+        
     }
     refCb(instance){
         currSquare = instance;
     }
     render(){
-        return <Square ref={this.refCb} cellArr={this.getCellArrOfChapeByType(this.state.type)}></Square>
+        return <Square 
+                    ref={this.refCb} 
+                    hasCellValid={this.props.hasCellValid} 
+                    getCellArrByType={this.getCellArrOfChapeByType}>
+               </Square>
     }
 }
 export default L;

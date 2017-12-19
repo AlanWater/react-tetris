@@ -39,7 +39,7 @@ class App extends Component {
           <button type="button" onClick={squareStartDownFunc}>down</button>
           <button type="button" onClick={squareStopDownFunc}>stop</button>
         </div>
-        <Panel ref={this.refCb}></Panel>
+        <Panel class="panel" ref={this.refCb}></Panel>
       </div>
     )
   }

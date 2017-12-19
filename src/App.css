@@ -11,6 +11,18 @@ body,html,#root{
   justify-content: center;
   align-items: center;
 }
+.panel{
+  overflow: hidden;
+}
+.panelCell{
+  background-color:#ddd;
+  border:1px solid #ccc;
+}
 .L{
   background:red;
+  border:1px solid #ddd;
+}
+.J{
+  background:pink;
+  border:1px solid #ddd;
 }

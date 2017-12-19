@@ -14,8 +14,7 @@ class Cell extends Component{
             left:this.props.x*cell_w*UNIT+'px',
             top:this.props.y*cell_h*UNIT+'px',
             width:cell_w*UNIT+'px',
-            height:cell_h*UNIT+'px',
-            border:'1px solid #ddd'
+            height:cell_h*UNIT+'px'
         }
         return <div className={this.props.shapetype} style={style}></div>
     }

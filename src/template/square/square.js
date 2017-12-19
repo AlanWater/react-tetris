@@ -1,14 +1,46 @@
 import React from 'react';
 import Cell from './cell';
 import {DOWN_FRAME,game_panel_h,game_panel_w} from './../config/square.base.config';
+import eventEmitter from './../gammer/eventEmitter';
 //方块抽象类
 class Square extends Cell{
     constructor(props){
         super(props);
+        let type = Math.random()*4 | 0;
         this.state = {
             downTimer:undefined,
-            cellArr:this.props.cellArr,
-            downSpeed:1
+            downSpeed:1,
+            type:type,
+            cellArr:props.getCellArrByType?props.getCellArrByType(type):()=>([])
+        }
+    }
+    change(){
+        let right = undefined,
+            tempArr = this.props.getCellArrByType((this.state.type+1)%4).map((item)=>{
+                let tempItem = {
+                    x:item.x,
+                    y:item.y,
+                    shapetype:item.shapetype
+                }
+                if(!right) right = tempItem
+                else{
+                    if(tempItem.x>right.x){
+                        right = tempItem;
+                    }
+                }
+                return tempItem
+            });
+        
+        while(!!right && (right.x>game_panel_w-1) && !this.props.hasCellValid(tempArr)){
+            for(var idx = 0;idx < tempArr.length;idx++){
+                tempArr[idx].x--;
+            }
+        }
+        if(right.x<game_panel_w){
+            this.setState((preState)=>({
+                type:(preState.type+1)%4,
+                cellArr:tempArr
+            }));
         }
     }
     canMove(to,forward){
@@ -21,9 +53,13 @@ class Square extends Cell{
                 break;
             }
         }
+        if(this.props.hasCellValid(this.state.cellArr)){
+            flag = false;
+        }
         if(!flag){
             if(forward === 'down'){
                 this.stop();
+                eventEmitter.emit('cell.dropOnPanel',this.state.cellArr);
             }else if(forward === 'right'){
 
             }
