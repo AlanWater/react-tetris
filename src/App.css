@@ -26,3 +26,23 @@ body,html,#root{
   background:pink;
   border:1px solid #ddd;
 }
+.I{
+  background:green;
+  border:1px solid #ddd;
+}
+.O{
+  background:yellow;
+  border:1px solid #ddd;
+}
+.T{
+  background:orange;
+  border:1px solid #ddd;
+}
+.S{
+  background:rgb(129, 188, 236);
+  border:1px solid #ddd;
+}
+.Z{
+  background:cyan;
+  border:1px solid #ddd;
+}

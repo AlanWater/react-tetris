@@ -13,5 +13,5 @@
             PAUSE:'pause', //暂停
             GAME_OVER:'gameover' //游戏结束
         },
-        DOWN_FRAME = 26; //下落帧数
+        DOWN_FRAME = 32; //下落帧数
 export  {UNIT,cell_w,cell_h,game_panel_h,game_panel_w,NORMAL_DOWN_SPEED,FAST_DOWN_SPEED,gameStatus,DOWN_FRAME}

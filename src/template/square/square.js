@@ -2,6 +2,7 @@ import React from 'react';
 import Cell from './cell';
 import {DOWN_FRAME,game_panel_h,game_panel_w} from './../config/square.base.config';
 import eventEmitter from './../gammer/eventEmitter';
+var initAliveStatus = 'sleep';
 //方块抽象类
 class Square extends Cell{
     constructor(props){
@@ -11,10 +12,13 @@ class Square extends Cell{
             downTimer:undefined,
             downSpeed:1,
             type:type,
-            cellArr:props.getCellArrByType?props.getCellArrByType(type):()=>([])
+            cellArr:props.getCellArrByType?props.getCellArrByType(type):()=>([]),
+            aliveStatus:initAliveStatus
         }
+        // this.rebirth = this.rebirth.bind(this);
     }
     change(){
+        if(this.state.aliveStatus==='dead'||this.state.aliveStatus==='sleep'){ return false; }
         let right = undefined,
             tempArr = this.props.getCellArrByType((this.state.type+1)%4).map((item)=>{
                 let tempItem = {
@@ -59,12 +63,30 @@ class Square extends Cell{
         if(!flag){
             if(forward === 'down'){
                 this.stop();
-                eventEmitter.emit('cell.dropOnPanel',this.state.cellArr);
-            }else if(forward === 'right'){
-
+                this.setState({
+                    aliveStatus:'deading'
+                });
+                this.deadingAction();
             }
+        }else{
+            this.setState({
+                aliveStatus:'alive'
+            });
         }
         return flag;
+    }
+    // rebirth(){
+    //     this.setState({
+    //         aliveStatus:'sleep'
+    //     });
+    // }
+    deadingAction(){
+        setTimeout(()=>{
+            this.setState({
+                aliveStatus:'dead'
+            });
+            eventEmitter.emit('cell.dropOnPanel',this.state.cellArr);                                    
+        },(1100-this.state.downSpeed*100));
     }
     moveState(x,y,forward){
         const tempArr = this.state.cellArr.map((item)=>({
@@ -84,7 +106,7 @@ class Square extends Cell{
         this.setState({
             downTimer:setInterval(()=>{
                 this.moveState(0,1/DOWN_FRAME,'down');
-            },(900-this.state.downSpeed*100)/DOWN_FRAME)
+            },(1100-this.state.downSpeed*100)/DOWN_FRAME)
         })
     }
     //落地停止,方块碰到地面会停止运动
@@ -93,10 +115,12 @@ class Square extends Cell{
     }
     //左移动
     left(){
+        if(!this.state.downTimer){ return false; }
         this.moveState(-1,0);
     }
     //右移动
     right(){
+        if(!this.state.downTimer){ return false; }
         this.moveState(1,0);
     }
     //重置下落行为
@@ -106,7 +130,7 @@ class Square extends Cell{
     }
     //快速下落
     setDownSpeed( downSpeed ){
-        if(!this.state.downTimer) return;
+        if(!this.state.downTimer){ return false; }
         this.setState({
             downSpeed
         })
@@ -114,6 +138,9 @@ class Square extends Cell{
     }
     shouldComponentUpdate( val ){
         return true;
+    }
+    componentDidMount(){
+        //eventEmitter.addListener('square.rebirth',this.rebirth);
     }
     componentWillReceiveProps( props ){
         if( props.cellArr ){

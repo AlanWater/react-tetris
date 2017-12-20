@@ -1,7 +1,6 @@
 import React,{ Component } from 'react';
 import { game_panel_w,game_panel_h,UNIT,FAST_DOWN_SPEED,NORMAL_DOWN_SPEED } from './../config/square.base.config';
-import L from './../square/L';
-import J from './../square/J';
+import { I,J,L,S,Z,O,T } from './../gammer/square.base';
 import Cell from './../square/cell';
 import { keymap } from './../config/panel.keymap.config';
 import eventEmitter from './../gammer/eventEmitter';
@@ -14,22 +13,38 @@ const panelStyle = {
     overflow:'hidden'
 }
 var currentInstance = {},
-    fastDownFlag = false;
+    fastDownFlag = false,
+    squareArr = [I,J,L,S,Z,O,T],
+    initCurrentSquare = {
+        Oxy:{
+            x:game_panel_w/2-2,
+            y:0
+        }
+    },
+    currentSquareIdx = Math.random()*7|0,
+    nextActiveFlag = false;
 class Panel extends Component{
     constructor(props){
         super(props);
         this.state = {
-            currentSquare:{
-                Oxy:{
-                    x:game_panel_w/2-2,
-                    y:0
-                }
-            },
+            currentSquare:initCurrentSquare,
             cellMap:[]
         }
     }
+    nextActiveSquare(){
+        this.setState({
+            currentSquare:initCurrentSquare
+        });
+        nextActiveFlag = true;
+        currentSquareIdx = Math.random()*7|0;
+        currentInstance.freeDown();
+        // eventEmitter.emit('square.rebirth');
+    }
     setCurrentSquare(instance){
         currentInstance = instance;
+    }
+    shouldComponentUpdate(){
+        return true;
     }
     componentDidMount(){
         document.addEventListener('keydown',(event)=>{
@@ -75,6 +90,7 @@ class Panel extends Component{
         })
         this.cellDropOnLandEmitter = eventEmitter.addListener('cell.dropOnPanel',( cellArr )=>{
             this.addPanelCell(cellArr);
+            this.nextActiveSquare();
         })
         this.thePlaceHasCell = this.thePlaceHasCell.bind(this);
     }
@@ -111,8 +127,8 @@ class Panel extends Component{
             tempCellArr = preState.cellMap.map((item)=>(item));
             for(var idx=0;idx<cellArr.length;idx++){
                 tempCell = cellArr[idx];
-                tempY = Math.ceil(tempCell.y);
-                if(!tempCellArr[tempY]){
+                tempY = Math.floor(tempCell.y);
+                if(tempCellArr[tempY] === undefined){
                     tempCellArr[tempY] = [];
                 }
                 tempCellArr[tempY][tempCell.x] = tempCell;
@@ -125,6 +141,7 @@ class Panel extends Component{
     thePlaceHasCell( cellArr ){
         let tempCell,
             tempY;
+
         for(var idx=0;idx<cellArr.length;idx++){
             tempCell = cellArr[idx];
             tempY = Math.ceil(tempCell.y);
@@ -136,9 +153,13 @@ class Panel extends Component{
         }
         return false;
     }
+    randomActiveSquare( currentSquareIdx ){
+        let InstanceSquare = squareArr[currentSquareIdx];
+        return <InstanceSquare ref={this.setCurrentSquare} hasCellValid={this.thePlaceHasCell} Oxy={this.state.currentSquare.Oxy}/>;
+    }
     render(){
         return <div style={panelStyle}>
-                  <J ref={this.setCurrentSquare} hasCellValid={this.thePlaceHasCell} Oxy={this.state.currentSquare.Oxy}></J>
+                  {this.randomActiveSquare(currentSquareIdx)}
                   {this.showCellMap()}
                </div>
     }
