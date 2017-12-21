@@ -127,7 +127,7 @@ class Panel extends Component{
             tempCellArr = preState.cellMap.map((item)=>(item));
             for(var idx=0;idx<cellArr.length;idx++){
                 tempCell = cellArr[idx];
-                tempY = Math.floor(tempCell.y);
+                tempY = Math.ceil(tempCell.y);
                 if(tempCellArr[tempY] === undefined){
                     tempCellArr[tempY] = [];
                 }
@@ -138,7 +138,7 @@ class Panel extends Component{
             };
         })
     }
-    thePlaceHasCell( cellArr ){
+    thePlaceHasCell( cellArr,forward ){
         let tempCell,
             tempY;
 
@@ -146,7 +146,7 @@ class Panel extends Component{
             tempCell = cellArr[idx];
             tempY = Math.ceil(tempCell.y);
             if(!!this.state.cellMap[tempY]){
-                if(!!this.state.cellMap[tempY][tempCell.x]){
+                if(!!this.state.cellMap[tempY][tempCell.x]||(!!this.state.cellMap[tempY-1]&&!!this.state.cellMap[tempY-1][tempCell.x])){
                     return true;
                 }
             }

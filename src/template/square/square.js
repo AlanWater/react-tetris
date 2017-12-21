@@ -40,7 +40,7 @@ class Square extends Cell{
                 tempArr[idx].x--;
             }
         }
-        if(right.x<game_panel_w){
+        if(right.x<game_panel_w && this.canMove(tempArr)){
             this.setState((preState)=>({
                 type:(preState.type+1)%4,
                 cellArr:tempArr
@@ -57,7 +57,7 @@ class Square extends Cell{
                 break;
             }
         }
-        if(this.props.hasCellValid(this.state.cellArr)){
+        if(this.props.hasCellValid(to,forward)){
             flag = false;
         }
         if(!flag){
@@ -94,7 +94,7 @@ class Square extends Cell{
             y:item.y+y,
             shapetype:item.shapetype
         }))
-        if(this.canMove(tempArr,forward)){
+        if(this.canMove(tempArr,forward)&&this.state.aliveStatus!=='deading'){
             this.setState({
                 cellArr:tempArr
             })
