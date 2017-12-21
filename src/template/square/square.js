@@ -2,23 +2,20 @@ import React from 'react';
 import Cell from './cell';
 import {DOWN_FRAME,game_panel_h,game_panel_w} from './../config/square.base.config';
 import eventEmitter from './../gammer/eventEmitter';
-var initAliveStatus = 'sleep';
+import { ActiveSquare } from './../gammer/common.methods';
 //方块抽象类
 class Square extends Cell{
     constructor(props){
         super(props);
         let type = Math.random()*4 | 0;
         this.state = {
-            downTimer:undefined,
-            downSpeed:1,
             type:type,
-            cellArr:props.getCellArrByType?props.getCellArrByType(type):()=>([]),
-            aliveStatus:initAliveStatus
+            cellArr:props.getCellArrByType?props.getCellArrByType(type):()=>([])
         }
-        // this.rebirth = this.rebirth.bind(this);
+        ActiveSquare.setActiveSquareStatus('sleep');
     }
     change(){
-        if(this.state.aliveStatus==='dead'||this.state.aliveStatus==='sleep'){ return false; }
+        if(!ActiveSquare.isMoving()){ return false; }
         let right = undefined,
             tempArr = this.props.getCellArrByType((this.state.type+1)%4).map((item)=>{
                 let tempItem = {
@@ -63,30 +60,19 @@ class Square extends Cell{
         if(!flag){
             if(forward === 'down'){
                 this.stop();
-                this.setState({
-                    aliveStatus:'deading'
-                });
+                ActiveSquare.setActiveSquareStatus('deading');
                 this.deadingAction();
             }
         }else{
-            this.setState({
-                aliveStatus:'alive'
-            });
+            ActiveSquare.setActiveSquareStatus('alive');
         }
         return flag;
     }
-    // rebirth(){
-    //     this.setState({
-    //         aliveStatus:'sleep'
-    //     });
-    // }
     deadingAction(){
         setTimeout(()=>{
-            this.setState({
-                aliveStatus:'dead'
-            });
+            ActiveSquare.setActiveSquareStatus('dead');
             eventEmitter.emit('cell.dropOnPanel',this.state.cellArr);                                    
-        },(1100-this.state.downSpeed*100));
+        },(1100-ActiveSquare.getDownSpeed()*100));
     }
     moveState(x,y,forward){
         const tempArr = this.state.cellArr.map((item)=>({
@@ -94,7 +80,7 @@ class Square extends Cell{
             y:item.y+y,
             shapetype:item.shapetype
         }))
-        if(this.canMove(tempArr,forward)&&this.state.aliveStatus!=='deading'){
+        if(this.canMove(tempArr,forward)&&ActiveSquare.isMoving()){
             this.setState({
                 cellArr:tempArr
             })
@@ -103,24 +89,24 @@ class Square extends Cell{
     //所有方块都有的抽象方法
     //自由下落,方块出场就会自动下落
     freeDown(){
-        this.setState({
-            downTimer:setInterval(()=>{
-                this.moveState(0,1/DOWN_FRAME,'down');
-            },(1100-this.state.downSpeed*100)/DOWN_FRAME)
-        })
+        ActiveSquare.movingTimer =  setInterval(()=>{
+                                            this.moveState(0,1/DOWN_FRAME,'down');
+                                        },
+                                        (1100-ActiveSquare.getDownSpeed()*100)/DOWN_FRAME
+                                    );
     }
     //落地停止,方块碰到地面会停止运动
     stop(){
-        clearInterval(this.state.downTimer);
+        clearInterval(ActiveSquare.movingTimer);
     }
     //左移动
     left(){
-        if(!this.state.downTimer){ return false; }
+        if(!ActiveSquare.movingTimer){ return false; }
         this.moveState(-1,0);
     }
     //右移动
     right(){
-        if(!this.state.downTimer){ return false; }
+        if(!ActiveSquare.movingTimer){ return false; }
         this.moveState(1,0);
     }
     //重置下落行为
@@ -130,17 +116,15 @@ class Square extends Cell{
     }
     //快速下落
     setDownSpeed( downSpeed ){
-        if(!this.state.downTimer){ return false; }
-        this.setState({
-            downSpeed
-        })
+        if(!ActiveSquare.movingTimer){ return false; }
+        ActiveSquare.setDownSpeed( downSpeed );
         this.resetDown();
     }
     shouldComponentUpdate( val ){
         return true;
     }
     componentDidMount(){
-        //eventEmitter.addListener('square.rebirth',this.rebirth);
+        
     }
     componentWillReceiveProps( props ){
         if( props.cellArr ){

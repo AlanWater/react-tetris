@@ -10,3 +10,23 @@ export const getOxy = ( arr ) => {
         y:maxY
     }
 }
+export var ActiveSquare = {
+    status:'birthing',
+    movingTimer:undefined,
+    downSpeed:1,
+    getActiveSquareStatus(){
+        return this.status;
+    },
+    setActiveSquareStatus( status ){
+        this.status = status;
+    },
+    isMoving(){
+        return this.status === 'deading' || this.status === 'alive';
+    },
+    getDownSpeed(){
+        return this.downSpeed;
+    },
+    setDownSpeed( downSpeed ){
+        this.downSpeed = downSpeed;
+    }
+}

@@ -4,6 +4,7 @@ import { I,J,L,S,Z,O,T } from './../gammer/square.base';
 import Cell from './../square/cell';
 import { keymap } from './../config/panel.keymap.config';
 import eventEmitter from './../gammer/eventEmitter';
+import { ActiveSquare } from './../gammer/common.methods';
 const panelStyle = {
     border:'1px solid #333',
     position:'relative',
@@ -21,24 +22,19 @@ var currentInstance = {},
             y:0
         }
     },
-    currentSquareIdx = Math.random()*7|0,
-    nextActiveFlag = false;
+    currentSquareIdx = Math.random()*7|0;
 class Panel extends Component{
     constructor(props){
         super(props);
         this.state = {
-            currentSquare:initCurrentSquare,
             cellMap:[]
         }
     }
     nextActiveSquare(){
-        this.setState({
-            currentSquare:initCurrentSquare
-        });
-        nextActiveFlag = true;
-        currentSquareIdx = Math.random()*7|0;
-        currentInstance.freeDown();
-        // eventEmitter.emit('square.rebirth');
+        if(ActiveSquare.getActiveSquareStatus()==='birthing'){
+            ActiveSquare.setActiveSquareStatus('sleep');
+            currentInstance.freeDown();
+        }
     }
     setCurrentSquare(instance){
         currentInstance = instance;
@@ -46,8 +42,16 @@ class Panel extends Component{
     shouldComponentUpdate(){
         return true;
     }
+    componentDidUpdate(args){
+        currentSquareIdx = Math.random()*7|0;
+        ActiveSquare.setActiveSquareStatus('birthing');
+    }
     componentDidMount(){
+        this.thePlaceHasCell = this.thePlaceHasCell.bind(this);
         document.addEventListener('keydown',(event)=>{
+            if(ActiveSquare.getActiveSquareStatus()==='birthing'){
+                return false;
+            }
             switch(keymap[event.key]){
                 case 'up':{
                     this.currentSquareChange();
@@ -71,6 +75,9 @@ class Panel extends Component{
             }
         })
         document.addEventListener('keyup',(event)=>{
+            if(ActiveSquare.getActiveSquareStatus()==='birthing'){
+                return false;
+            }
             switch(keymap[event.key]){
                 case 'up':{
                     break;
@@ -92,7 +99,6 @@ class Panel extends Component{
             this.addPanelCell(cellArr);
             this.nextActiveSquare();
         })
-        this.thePlaceHasCell = this.thePlaceHasCell.bind(this);
     }
     componentWillUnMount(){
         eventEmitter.removeListener(this.cellDropOnLandEmitter);
@@ -140,13 +146,15 @@ class Panel extends Component{
     }
     thePlaceHasCell( cellArr,forward ){
         let tempCell,
-            tempY;
+            tempY,
+            moveFlag;
 
         for(var idx=0;idx<cellArr.length;idx++){
             tempCell = cellArr[idx];
             tempY = Math.ceil(tempCell.y);
+            moveFlag = tempY === tempCell.y;
             if(!!this.state.cellMap[tempY]){
-                if(!!this.state.cellMap[tempY][tempCell.x]||(!!this.state.cellMap[tempY-1]&&!!this.state.cellMap[tempY-1][tempCell.x])){
+                if(!!this.state.cellMap[tempY][tempCell.x]||(!moveFlag&&!!this.state.cellMap[tempY-1]&&!!this.state.cellMap[tempY-1][tempCell.x])){
                     return true;
                 }
             }
@@ -155,7 +163,7 @@ class Panel extends Component{
     }
     randomActiveSquare( currentSquareIdx ){
         let InstanceSquare = squareArr[currentSquareIdx];
-        return <InstanceSquare ref={this.setCurrentSquare} hasCellValid={this.thePlaceHasCell} Oxy={this.state.currentSquare.Oxy}/>;
+        return <InstanceSquare ref={this.setCurrentSquare} hasCellValid={this.thePlaceHasCell} Oxy={initCurrentSquare.Oxy}/>;
     }
     render(){
         return <div style={panelStyle}>
