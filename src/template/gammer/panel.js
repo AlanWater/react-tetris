@@ -33,6 +33,7 @@ class Panel extends Component{
     }
     setActiveSleep2Down(){
         ActiveSquare.setActiveSquareStatus('sleep');
+        ActiveSquare.setDownSpeed( NORMAL_DOWN_SPEED );
         currentInstance.freeDown(); // 释放下落状态
     }
     nextActiveSquare(){
@@ -74,8 +75,8 @@ class Panel extends Component{
                     break;
                 }
                 case 'down':{
-                    if(!fastDownFlag){
-                        fastDownFlag = true;
+                    if(ActiveSquare.getDownSpeed()!==FAST_DOWN_SPEED){
+                        ActiveSquare.setDownSpeed( FAST_DOWN_SPEED );
                         currentInstance.setDownSpeed( FAST_DOWN_SPEED );
                     }
                     break;
@@ -98,8 +99,10 @@ class Panel extends Component{
                     break;
                 }
                 case 'down':{
-                    fastDownFlag = false;
-                    currentInstance.setDownSpeed( NORMAL_DOWN_SPEED );
+                    if(ActiveSquare.getDownSpeed()!==NORMAL_DOWN_SPEED){
+                        ActiveSquare.setDownSpeed( NORMAL_DOWN_SPEED );
+                        currentInstance.setDownSpeed( NORMAL_DOWN_SPEED );
+                    }
                     break;
                 }
             }
