@@ -27,13 +27,21 @@ class Panel extends Component{
     constructor(props){
         super(props);
         this.state = {
+            currentSquare:this.randomActiveSquare( currentSquareIdx ),
             cellMap:[]
         }
     }
+    setActiveSleep2Down(){
+        ActiveSquare.setActiveSquareStatus('sleep');
+        currentInstance.freeDown(); // 释放下落状态
+    }
     nextActiveSquare(){
-        if(ActiveSquare.getActiveSquareStatus()==='birthing'){
-            ActiveSquare.setActiveSquareStatus('sleep');
-            currentInstance.freeDown();
+        if(ActiveSquare.getActiveSquareStatus()==='dead'){ //当前方块死亡时才会生产新的方块
+            ActiveSquare.setActiveSquareStatus('birthing'); //下一个方块出生中
+            currentSquareIdx = Math.random()*7|0;
+            this.setState({ // 产生新的下落方块
+                currentSquare:this.randomActiveSquare( currentSquareIdx )
+            },this.setActiveSleep2Down)
         }
     }
     setCurrentSquare(instance){
@@ -42,16 +50,16 @@ class Panel extends Component{
     shouldComponentUpdate(){
         return true;
     }
-    componentDidUpdate(args){
-        currentSquareIdx = Math.random()*7|0;
-        ActiveSquare.setActiveSquareStatus('birthing');
+    componentDidUpdate(){
+        
     }
     componentDidMount(){
-        this.thePlaceHasCell = this.thePlaceHasCell.bind(this);
+        // this.thePlaceHasCell = this.thePlaceHasCell.bind(this);
         document.addEventListener('keydown',(event)=>{
-            if(ActiveSquare.getActiveSquareStatus()==='birthing'){
+            if(!ActiveSquare.isMoving()){ //只有当方块处于活动状态的时候才可以进行键盘操作
                 return false;
             }
+            console.log(`down ${ActiveSquare.getActiveSquareStatus()}`);
             switch(keymap[event.key]){
                 case 'up':{
                     this.currentSquareChange();
@@ -75,9 +83,10 @@ class Panel extends Component{
             }
         })
         document.addEventListener('keyup',(event)=>{
-            if(ActiveSquare.getActiveSquareStatus()==='birthing'){
+            if(!ActiveSquare.isMoving()){ //只有当方块处于活动状态的时候才可以进行键盘操作
                 return false;
             }
+            console.log(`up ${ActiveSquare.getActiveSquareStatus()}`);
             switch(keymap[event.key]){
                 case 'up':{
                     break;
@@ -95,9 +104,11 @@ class Panel extends Component{
                 }
             }
         })
-        this.cellDropOnLandEmitter = eventEmitter.addListener('cell.dropOnPanel',( cellArr )=>{
-            this.addPanelCell(cellArr);
-            this.nextActiveSquare();
+        this.cellDropOnLandEmitter = eventEmitter.addListener('cell.dropOnPanel',( deadSquareInstance )=>{
+            deadSquareInstance.stop(); //停止下落
+            ActiveSquare.setActiveSquareStatus('dead'); //当前方块设置为dead
+            this.addPanelCell(deadSquareInstance.state.cellArr); //方块加入地板
+            this.nextActiveSquare(); //下一个方块
         })
     }
     componentWillUnMount(){
@@ -148,7 +159,6 @@ class Panel extends Component{
         let tempCell,
             tempY,
             moveFlag;
-
         for(var idx=0;idx<cellArr.length;idx++){
             tempCell = cellArr[idx];
             tempY = Math.ceil(tempCell.y);
@@ -163,11 +173,11 @@ class Panel extends Component{
     }
     randomActiveSquare( currentSquareIdx ){
         let InstanceSquare = squareArr[currentSquareIdx];
-        return <InstanceSquare ref={this.setCurrentSquare} hasCellValid={this.thePlaceHasCell} Oxy={initCurrentSquare.Oxy}/>;
+        return <InstanceSquare ref={this.setCurrentSquare} hasCellValid={this.thePlaceHasCell.bind(this)} Oxy={initCurrentSquare.Oxy}/>;
     }
     render(){
         return <div style={panelStyle}>
-                  {this.randomActiveSquare(currentSquareIdx)}
+                  {this.state.currentSquare}
                   {this.showCellMap()}
                </div>
     }

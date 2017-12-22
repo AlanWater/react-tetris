@@ -59,20 +59,15 @@ class Square extends Cell{
         }
         if(!flag){
             if(forward === 'down'){
-                this.stop();
-                ActiveSquare.setActiveSquareStatus('deading');
-                this.deadingAction();
+                this.deadAction();
             }
         }else{
             ActiveSquare.setActiveSquareStatus('alive');
         }
         return flag;
     }
-    deadingAction(){
-        setTimeout(()=>{
-            ActiveSquare.setActiveSquareStatus('dead');
-            eventEmitter.emit('cell.dropOnPanel',this.state.cellArr);                                    
-        },(1100-ActiveSquare.getDownSpeed()*100));
+    deadAction(){
+        eventEmitter.emit('cell.dropOnPanel',this);
     }
     moveState(x,y,forward){
         const tempArr = this.state.cellArr.map((item)=>({
@@ -89,11 +84,13 @@ class Square extends Cell{
     //所有方块都有的抽象方法
     //自由下落,方块出场就会自动下落
     freeDown(){
-        ActiveSquare.movingTimer =  setInterval(()=>{
-                                            this.moveState(0,1/DOWN_FRAME,'down');
-                                        },
-                                        (1100-ActiveSquare.getDownSpeed()*100)/DOWN_FRAME
-                                    );
+        if(ActiveSquare.getActiveSquareStatus()==='sleep' || ActiveSquare.isMoving()){
+            ActiveSquare.movingTimer =  setInterval(()=>{
+                                                this.moveState(0,1/DOWN_FRAME,'down');
+                                            },
+                                            (1100-ActiveSquare.getDownSpeed()*100)/DOWN_FRAME
+                                        );
+        }
     }
     //落地停止,方块碰到地面会停止运动
     stop(){
