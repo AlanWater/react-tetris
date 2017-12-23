@@ -1,6 +1,6 @@
 import React from 'react';
 import Square from './square';
-import { getOxy } from './../gammer/common.methods';
+import { getOxy } from './../../js/gammer/common.methods';
 var currSquare,
     Oxy;
 class S extends Square{
@@ -17,19 +17,19 @@ class S extends Square{
             case 0:{
                 return [{x:Oxy.x,y:Oxy.y,shapetype:'S'},
                         {x:Oxy.x+1,y:Oxy.y,shapetype:'S'},
-                        {x:Oxy.x+1,y:Oxy.y-1,shapetype:'S'},
-                        {x:Oxy.x+2,y:Oxy.y-1,shapetype:'S'}]
+                        {x:Oxy.x+1,y:Oxy.y+1,shapetype:'S'},
+                        {x:Oxy.x+2,y:Oxy.y+1,shapetype:'S'}]
             }
             case 1:{
                 return [{x:Oxy.x+1,y:Oxy.y,shapetype:'S'},
-                        {x:Oxy.x,y:Oxy.y-1,shapetype:'S'},
-                        {x:Oxy.x+1,y:Oxy.y-1,shapetype:'S'},
-                        {x:Oxy.x,y:Oxy.y-2,shapetype:'S'}]
+                        {x:Oxy.x,y:Oxy.y+1,shapetype:'S'},
+                        {x:Oxy.x+1,y:Oxy.y+1,shapetype:'S'},
+                        {x:Oxy.x,y:Oxy.y+2,shapetype:'S'}]
             }
         }
     }
-    freeDown(){
-        currSquare.freeDown();
+    freeDown(timerDesc,controller){
+        currSquare.freeDown(timerDesc,controller);
     }
     stop(){
         currSquare.stop();
@@ -39,9 +39,6 @@ class S extends Square{
     }
     right(){
         currSquare.right();
-    }
-    setDownSpeed( speed ){
-        currSquare.setDownSpeed( speed );
     }
     change(){
         currSquare.change();

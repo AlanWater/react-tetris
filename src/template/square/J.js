@@ -1,6 +1,6 @@
 import React from 'react';
 import Square from './square';
-import { getOxy } from './../gammer/common.methods';
+import { getOxy } from './../../js/gammer/common.methods';
 var currSquare,
     Oxy;
 class J extends Square{
@@ -17,31 +17,31 @@ class J extends Square{
             case 0:{
                 return [{x:Oxy.x,y:Oxy.y,shapetype:'J'},
                         {x:Oxy.x+1,y:Oxy.y,shapetype:'J'},
-                        {x:Oxy.x+1,y:Oxy.y-1,shapetype:'J'},
-                        {x:Oxy.x+1,y:Oxy.y-2,shapetype:'J'}]
+                        {x:Oxy.x+1,y:Oxy.y+1,shapetype:'J'},
+                        {x:Oxy.x+1,y:Oxy.y+2,shapetype:'J'}]
             }
             case 1:{
                 return [{x:Oxy.x+2,y:Oxy.y,shapetype:'J'},
-                        {x:Oxy.x+2,y:Oxy.y-1,shapetype:'J'},
-                        {x:Oxy.x+1,y:Oxy.y-1,shapetype:'J'},
-                        {x:Oxy.x,y:Oxy.y-1,shapetype:'J'}]
+                        {x:Oxy.x+2,y:Oxy.y+1,shapetype:'J'},
+                        {x:Oxy.x+1,y:Oxy.y+1,shapetype:'J'},
+                        {x:Oxy.x,y:Oxy.y+1,shapetype:'J'}]
             }
             case 2:{
                 return [{x:Oxy.x,y:Oxy.y,shapetype:'J'},
-                        {x:Oxy.x,y:Oxy.y-1,shapetype:'J'},
-                        {x:Oxy.x,y:Oxy.y-2,shapetype:'J'},
-                        {x:Oxy.x+1,y:Oxy.y-2,shapetype:'J'}]
+                        {x:Oxy.x,y:Oxy.y+1,shapetype:'J'},
+                        {x:Oxy.x,y:Oxy.y+2,shapetype:'J'},
+                        {x:Oxy.x+1,y:Oxy.y+2,shapetype:'J'}]
             }
             case 3:{
                 return [{x:Oxy.x,y:Oxy.y,shapetype:'J'},
                         {x:Oxy.x+1,y:Oxy.y,shapetype:'J'},
                         {x:Oxy.x+2,y:Oxy.y,shapetype:'J'},
-                        {x:Oxy.x,y:Oxy.y-1,shapetype:'J'}]
+                        {x:Oxy.x,y:Oxy.y+1,shapetype:'J'}]
             }
         }
     }
-    freeDown(){
-        currSquare.freeDown();
+    freeDown(timerDesc,controller){
+        currSquare.freeDown(timerDesc,controller);
     }
     stop(){
         currSquare.stop();
@@ -51,9 +51,6 @@ class J extends Square{
     }
     right(){
         currSquare.right();
-    }
-    setDownSpeed( speed ){
-        currSquare.setDownSpeed( speed );
     }
     change(){
         currSquare.change();

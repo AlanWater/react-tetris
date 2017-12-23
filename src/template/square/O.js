@@ -1,6 +1,6 @@
 import React from 'react';
 import Square from './square';
-import { getOxy } from './../gammer/common.methods';
+import { getOxy } from './../../js/gammer/common.methods';
 var currSquare,
     Oxy;
 class O extends Square{
@@ -17,13 +17,13 @@ class O extends Square{
             default:{
                 return [{x:Oxy.x,y:Oxy.y,shapetype:'O'},
                         {x:Oxy.x+1,y:Oxy.y,shapetype:'O'},
-                        {x:Oxy.x,y:Oxy.y-1,shapetype:'O'},
-                        {x:Oxy.x+1,y:Oxy.y-1,shapetype:'O'}]
+                        {x:Oxy.x,y:Oxy.y+1,shapetype:'O'},
+                        {x:Oxy.x+1,y:Oxy.y+1,shapetype:'O'}]
             }
         }
     }
-    freeDown(){
-        currSquare.freeDown();
+    freeDown(timerDesc,controller){
+        currSquare.freeDown(timerDesc,controller);
     }
     stop(){
         currSquare.stop();
@@ -33,9 +33,6 @@ class O extends Square{
     }
     right(){
         currSquare.right();
-    }
-    setDownSpeed( speed ){
-        currSquare.setDownSpeed( speed );
     }
     change(){
         currSquare.change();

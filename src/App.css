@@ -11,6 +11,9 @@ body,html,#root{
   justify-content: center;
   align-items: center;
 }
+.score{
+  float:right;
+}
 .panel{
   overflow: hidden;
 }

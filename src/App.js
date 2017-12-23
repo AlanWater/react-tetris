@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
-import Panel from './template/gammer/panel';
-import { gameStatus }from './template/config/square.base.config';
+import Panel from './template/ground/panel';
+import Score from './template/ground/score';
+import { gameStatus }from './js/config/square.base.config';
+import eventEmitter from './js/gammer/eventEmitter';
 var panelRef;
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      gameStatus:gameStatus.SLEEP
+      gameStatus:gameStatus.SLEEP,
+      score:0
     }
+    this.addScore = this.addScore.bind(this);
+  }
+  componentDidMount(){
+    eventEmitter.addListener('game.addScore',this.addScore);
   }
   refCb(instance){
     panelRef = instance;
@@ -30,6 +37,11 @@ class App extends Component {
     })
     panelRef.currentSquareStop();
   }
+  addScore( score ){
+    this.setState((preState)=>({
+      score:preState.score+score
+    }))
+  }
   render() {
     const squareStartDownFunc = this.squareStartDown.bind(this);
     const squareStopDownFunc = this.squareStopDown.bind(this);
@@ -38,6 +50,7 @@ class App extends Component {
         <div>
           <button type="button" onClick={squareStartDownFunc}>down</button>
           <button type="button" onClick={squareStopDownFunc}>stop</button>
+          <Score score={this.state.score}/>
         </div>
         <Panel class="panel" ref={this.refCb}></Panel>
       </div>

@@ -1,8 +1,8 @@
 import React from 'react';
 import Cell from './cell';
-import {DOWN_FRAME,game_panel_h,game_panel_w} from './../config/square.base.config';
-import eventEmitter from './../gammer/eventEmitter';
-import { ActiveSquare } from './../gammer/common.methods';
+import {DOWN_FRAME,game_panel_h,game_panel_w} from './../../js/config/square.base.config';
+import eventEmitter from './../../js/gammer/eventEmitter';
+import { ActiveSquare } from './../../js/gammer/common.methods';
 //方块抽象类
 class Square extends Cell{
     constructor(props){
@@ -49,7 +49,7 @@ class Square extends Cell{
             flag = true;
         for(var idx=0;idx<to.length;idx++){
             tempXy = to[idx];
-            if(tempXy.x<0||tempXy.x>game_panel_w-1||tempXy.y>game_panel_h-1){
+            if(tempXy.x<0||tempXy.x>game_panel_w-1||tempXy.y<0){
                 flag = false;
                 break;
             }
@@ -83,18 +83,27 @@ class Square extends Cell{
     }
     //所有方块都有的抽象方法
     //自由下落,方块出场就会自动下落
-    freeDown(){
+    freeDown(timerDesc,timerController){
         if(ActiveSquare.getActiveSquareStatus()==='sleep' || ActiveSquare.isMoving()){
-            ActiveSquare.movingTimer =  setInterval(()=>{
-                                                this.moveState(0,1/DOWN_FRAME,'down');
+            let speed = ActiveSquare.currentMovingTimerFlag === 'normal'
+                            ?
+                            (1100-ActiveSquare.getSpeedLevel()*100)/DOWN_FRAME
+                            :
+                            (1100-ActiveSquare.getSpeedLevel()*100)/6/DOWN_FRAME;
+            ActiveSquare[timerDesc] =  setInterval(()=>{
+                                                if(!timerController()){
+                                                    return false;
+                                                }
+                                                this.moveState(0,-1/DOWN_FRAME,'down');
                                             },
-                                            (1100-ActiveSquare.getDownSpeed()*100)/DOWN_FRAME
+                                            speed
                                         );
         }
     }
     //落地停止,方块碰到地面会停止运动
     stop(){
         clearInterval(ActiveSquare.movingTimer);
+        clearInterval(ActiveSquare.fastMovingTimer);
     }
     //左移动
     left(){
@@ -105,17 +114,6 @@ class Square extends Cell{
     right(){
         if(!ActiveSquare.movingTimer){ return false; }
         this.moveState(1,0);
-    }
-    //重置下落行为
-    resetDown(){
-        this.stop();
-        this.freeDown();
-    }
-    //快速下落
-    setDownSpeed( downSpeed ){
-        if(!ActiveSquare.movingTimer){ return false; }
-        ActiveSquare.setDownSpeed( downSpeed );
-        this.resetDown();
     }
     shouldComponentUpdate( val ){
         return true;
