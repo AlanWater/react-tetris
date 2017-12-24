@@ -48,7 +48,7 @@ class App extends Component {
     return (
       <div>
         <div>
-          <button type="button" onClick={squareStartDownFunc}>down</button>
+          <button type="button" onClick={squareStartDownFunc}>start</button>
           <button type="button" onClick={squareStopDownFunc}>stop</button>
           <Score score={this.state.score}/>
         </div>

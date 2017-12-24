@@ -89,7 +89,7 @@ class Square extends Cell{
                             ?
                             (1100-ActiveSquare.getSpeedLevel()*100)/DOWN_FRAME
                             :
-                            (1100-ActiveSquare.getSpeedLevel()*100)/6/DOWN_FRAME;
+                            (1100-ActiveSquare.getSpeedLevel()*100)/10/DOWN_FRAME;
             ActiveSquare[timerDesc] =  setInterval(()=>{
                                                 if(!timerController()){
                                                     return false;
