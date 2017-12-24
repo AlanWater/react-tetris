@@ -85,11 +85,8 @@ class Square extends Cell{
     //自由下落,方块出场就会自动下落
     freeDown(timerDesc,timerController){
         if(ActiveSquare.getActiveSquareStatus()==='sleep' || ActiveSquare.isMoving()){
-            let speed = ActiveSquare.currentMovingTimerFlag === 'normal'
-                            ?
-                            (1100-ActiveSquare.getSpeedLevel()*100)/DOWN_FRAME
-                            :
-                            (1100-ActiveSquare.getSpeedLevel()*100)/10/DOWN_FRAME;
+            let speed = ActiveSquare.currentMovingTimerFlag === 'normal'?(1100-ActiveSquare.getSpeedLevel()*100)/DOWN_FRAME:
+                                ActiveSquare.currentMovingTimerFlag === 'fast'?(1100-ActiveSquare.getSpeedLevel()*100)/10/DOWN_FRAME:99999;
             ActiveSquare[timerDesc] =  setInterval(()=>{
                                                 if(!timerController()){
                                                     return false;
