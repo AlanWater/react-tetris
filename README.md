@@ -1,4 +1,4 @@
-一个功能简单的俄罗斯方块，初学者初作，基于react-app官方脚手架自己写来玩玩
+一个功能简单的俄罗斯方块，初学者初作，基于react-app-create 提供的脚手架，自己写来玩玩
 
 git clone https://github.com/AlanWater/react-tetris.git </br>
 npm install </br>
